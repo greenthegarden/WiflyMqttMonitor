@@ -4,11 +4,11 @@
 
 #include <FTOLED.h>
 
-const byte pin_cs = 7;
-const byte pin_dc = 2;
-const byte pin_reset = 3;
+const byte PIN_CS = 7;
+const byte PIN_DC = 2;
+const byte PIN_RESET = 3;
 
-OLED oled(pin_cs, pin_dc, pin_reset);
+OLED oled(PIN_CS, PIN_DC, PIN_RESET);
 
 
 #endif  /* WIFLYMQTTMONITOR_FTOLED_CONFIG_H_ */

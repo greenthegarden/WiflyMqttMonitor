@@ -54,10 +54,6 @@ void wifly_configure()
 
 byte wifly_connect()
 {
-#if USE_STATUS_LED
-  digitalWrite(STATUS_LED, HIGH);
-#endif
-
   DEBUG_LOG(1, "initialising wifly");
 
   WiFly.begin();
@@ -71,9 +67,6 @@ byte wifly_connect()
   } else {
     wiflyConnected = true;
     DEBUG_LOG(1, "  connected");
-#if USE_STATUS_LED
-    digitalWrite(STATUS_LED, LOW);
-#endif
     return 1;
   }
   return 0;

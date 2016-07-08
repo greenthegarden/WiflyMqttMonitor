@@ -5,7 +5,7 @@
 #include "debug.h"
 
 
-const byte BUFFER_SIZE            = 60;
+const byte BUFFER_SIZE             = 60;
 char progBuffer[BUFFER_SIZE];
 char messBuffer[BUFFER_SIZE];
 
@@ -14,7 +14,7 @@ char messBuffer[BUFFER_SIZE];
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
-const int BAUD_RATE               = 9600;
+const int BAUD_RATE                = 9600;
 
 
 #include <MemoryFree.h>
@@ -28,9 +28,9 @@ const int BAUD_RATE               = 9600;
 //#include "ftoledConfig.h"
 
 
-unsigned long alarmStart = 0UL;
-boolean soundAlarm = false;
-boolean alarmSounding = false;
+unsigned long alarmStart           = 0UL;
+boolean soundAlarm                 = false;
+boolean alarmSounding              = false;
 const unsigned long ALARM_DURATION = 5000UL;
 
 

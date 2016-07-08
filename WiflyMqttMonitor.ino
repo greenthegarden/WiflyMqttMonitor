@@ -60,6 +60,8 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
         soundAlarm = false;
       }
     }
+  } else if (topic_idx == 1) {
+    
   }
 
   // free memory assigned to message
@@ -78,6 +80,7 @@ boolean mqtt_connect()
   //  mqttClient.subscribe("homesecurity/status/sensor");
   //  mqttClient.subscribe("homesecurity/interior/status/sensor");
     mqttClient.subscribe("interiorhs/status/sensor");
+    mqttClient.subscribe("home/security/alarm");
   } else {
     DEBUG_LOG(1, "failed, rc = ");
     DEBUG_LOG(1, mqttClient.state());
@@ -109,7 +112,7 @@ void setup()
   wifly_connect();
 
 #if USE_HARDWARE_WATCHDOG
-  ResetWatchdog1();
+  ResetWatchdog();
 #endif
 }
 
@@ -120,6 +123,8 @@ void setup()
   --------------------------------------------------------------------------------------*/
 void loop()
 {
+  unsigned long currentMillis = millis();
+  
   // require a client.loop in order to receive subscriptions
   //  mqttClient.loop();
 
@@ -136,18 +141,17 @@ void loop()
   }
 
   if (soundAlarm && !alarmSounding) {
-    alarmStart = millis();
+    alarmStart = currentMillis;
     alarmSounding = true;
     DEBUG_LOG(1, "alarmStart set");
   }
 
-  if (alarmSounding && (millis() - alarmStart <= ALARM_DURATION)) {
+  if (alarmSounding && (currentMillis - alarmStart <= ALARM_DURATION)) {
     DEBUG_LOG(1, "alertTone");
     alertTone();
   }
 
-//  if (soundAlarm && (millis() - alarmStart > ALARM_DURATION)) {
-  if (alarmSounding && (millis() - alarmStart > ALARM_DURATION)) {
+  if (alarmSounding && (currentMillis - alarmStart > ALARM_DURATION)) {
     DEBUG_LOG(1, "stop alert");
     soundAlarm = false;
     alarmSounding = false;
@@ -155,13 +159,10 @@ void loop()
   }
 
 #if USE_HARDWARE_WATCHDOG
-  unsigned long currentMillis = millis();
-
-  if (currentMillis - previousMillis >= watchdog_interval) {
+  if (currentMillis - previousMillis >= WATCHDOG_INTERVAL) {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
-
-    ResetWatchdog1();
+    ResetWatchdog();
   }
 #endif
 }

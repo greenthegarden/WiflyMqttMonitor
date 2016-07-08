@@ -61,7 +61,15 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
       }
     }
   } else if (topic_idx == 1) {
-    
+    DEBUG_LOG(1, "ALARM_TOPIC topic arrived");
+    if (strcmp(message, "1") == 0) {
+      if (!alarmSounding) {
+        soundAlarm = true;
+        DEBUG_LOG(1, "sound alarm!!");
+      }
+    } else {
+      soundAlarm = false;
+    }    
   }
 
   // free memory assigned to message

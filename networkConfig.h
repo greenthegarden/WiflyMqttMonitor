@@ -5,9 +5,9 @@
 #define USE_SECURE_NETWORK   true
 
 // Wifi parameters
-const char SSID[]          = "videoAtHome";
+const char SSID[]          = "videoAtHome-2.4g";
 #if USE_SECURE_NETWORK
-const char PASSPHRASE[]    = "Cambridge&";
+const char PASSPHRASE[]    = "C@mbridge&";
 boolean    mode            = true; //or WEP_MODE
 #endif
 

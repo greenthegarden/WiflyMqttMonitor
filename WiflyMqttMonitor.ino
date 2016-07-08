@@ -42,14 +42,16 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
     DEBUG_LOG(1, "separator: ");
     DEBUG_LOG(1, separator);
     if (separator != 0) {
-      byte sensorRef = atoi(message);
+//      byte sensorRef = atoi(message);
+      char* sensorRef = message;
       DEBUG_LOG(1, "sensorRef: ");
       DEBUG_LOG(1, sensorRef);
       ++separator;
       byte sensorState = atoi(separator);
       DEBUG_LOG(1, "sensorState: ");
       DEBUG_LOG(1, sensorState);
-      if (sensorState != 1) {
+      if (sensorState == 2) {
+        // alarm triggered
         if (!alarmSounding) {
           soundAlarm = true;
           DEBUG_LOG(1, "sound alarm!!");
@@ -73,7 +75,9 @@ boolean mqtt_connect()
     publish_connected();
     //    publish_ip_address();
     // ... and subscribe to topics (should have list)
-    mqttClient.subscribe("homesecurity/status/sensor");
+  //  mqttClient.subscribe("homesecurity/status/sensor");
+  //  mqttClient.subscribe("homesecurity/interior/status/sensor");
+    mqttClient.subscribe("interiorhs/status/sensor");
   } else {
     DEBUG_LOG(1, "failed, rc = ");
     DEBUG_LOG(1, mqttClient.state());
@@ -142,10 +146,12 @@ void loop()
     alertTone();
   }
 
-  if (soundAlarm && (millis() - alarmStart > ALARM_DURATION)) {
+//  if (soundAlarm && (millis() - alarmStart > ALARM_DURATION)) {
+  if (alarmSounding && (millis() - alarmStart > ALARM_DURATION)) {
     DEBUG_LOG(1, "stop alert");
     soundAlarm = false;
     alarmSounding = false;
+//    alarmStart = 0UL;
   }
 
 #if USE_HARDWARE_WATCHDOG

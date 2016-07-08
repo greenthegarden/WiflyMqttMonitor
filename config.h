@@ -5,7 +5,7 @@
 #include "debug.h"
 
 
-const byte BUFFER_SIZE            = 32;
+const byte BUFFER_SIZE            = 60;
 char progBuffer[BUFFER_SIZE];
 char messBuffer[BUFFER_SIZE];
 

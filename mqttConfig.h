@@ -6,7 +6,7 @@
 
 
 // MQTT parameters
-IPAddress mqttServerAddr(192, 168, 1, 55);    // Pi
+IPAddress mqttServerAddr(192, 168, 1, 50);    // openHAB server
 char mqttClientId[]               = "monitor";
 const int MQTT_PORT               = 1883;
 //#define MQTT_MAX_PACKET_SIZE        168
@@ -44,7 +44,9 @@ PGM_P const MQTT_PAYLOADS[]           PROGMEM = { MQTT_PAYLOAD_CONNECTED,   // i
                                                 };
 
 // subscription topics
-const char SECURITY_TOPIC[]    PROGMEM = "homesecurity/status/sensor";
+//const char SECURITY_TOPIC[]    PROGMEM = "homesecurity/status/sensor";
+const char SECURITY_TOPIC[]    PROGMEM = "interiorhs/status/sensor";
+//const char SECURITY_TOPIC[]    PROGMEM = "homesecurity/interior/status/sensor";
 
 PGM_P const SUBSCRIPTION_TOPICS[]   PROGMEM = { SECURITY_TOPIC,    // idx = 0
                                               };

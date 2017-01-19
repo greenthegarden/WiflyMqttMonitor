@@ -1,25 +1,15 @@
 #ifndef WIFLYMQTTMONITOR_WIFLY_CONFIG_H_
 #define WIFLYMQTTMONITOR_WIFLY_CONFIG_H_
 
-/* 
- * RN-XV WiFly Module - Wire Antenna
- * MAC: 00:06:66:50:71:6f
- * IP: 192.168.1.52
- *  
- * RN-XV WiFly Module – SMA
- * MAC: 00:06:66:71:68:d5
- * IP: 192.168.1.51
- */
-
-/* 
+/*
  * WiFly configuration
- * 
- * reboot	
- * $$$	
- * factory RESET	
- * 	
+ *
+ * reboot
+ * $$$
+ * factory RESET
+ *
  * set wlan join 0    // Stop device connecting while we setup
- * 
+ *
  * set ip dhcp 1
  * set wlan ssid xxx
  * set wlan phrase xxx
@@ -85,7 +75,7 @@ byte wifly_disconnect()
 //void wifly_sleep()
 //{
 //  wifly_disconnect();
-//  
+//
 //  DEBUG_LOG(1, "WiFly: setting sleep timer");
 //  WiFly.setSleepTimer(10);
 //
@@ -95,4 +85,3 @@ byte wifly_disconnect()
 
 
 #endif  /* WIFLYMQTTMONITOR_WIFLY_CONFIG_H_ */
-

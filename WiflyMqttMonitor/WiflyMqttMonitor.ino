@@ -1,4 +1,13 @@
+#include <Arduino.h>
+
 #include "config.h"
+
+typedef enum {
+  WIRE_SHORTED = 0,
+  NORMAL       = 1,
+  TRIGGERED    = 2,
+  TAMPERED     = 3,
+} sensorStates_t;
 
 void callback(char* topic, uint8_t* payload, unsigned int length)
 {
@@ -42,22 +51,24 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
     DEBUG_LOG(1, "separator: ");
     DEBUG_LOG(1, separator);
     if (separator != 0) {
-//      byte sensorRef = atoi(message);
-      char* sensorRef = message;
+      //      byte sensorRef = atoi(message);
+      const char sensorRef = message[0];
       DEBUG_LOG(1, "sensorRef: ");
       DEBUG_LOG(1, sensorRef);
-      ++separator;
-      byte sensorState = atoi(separator);
-      DEBUG_LOG(1, "sensorState: ");
-      DEBUG_LOG(1, sensorState);
-      if (sensorState == 2) {
-        // alarm triggered
-        if (!alarmSounding) {
-          soundAlarm = true;
-          DEBUG_LOG(1, "sound alarm!!");
+      if (strcmp(sensorRef, 'D') == 0) {
+        ++separator;
+        byte sensorState = atoi(separator);
+        DEBUG_LOG(1, "sensorState: ");
+        DEBUG_LOG(1, sensorState);
+        if (sensorState == TRIGGERED) {
+          // alarm triggered
+          if (!alarmSounding) {
+            soundAlarm = true;
+            DEBUG_LOG(1, "sound alarm!!");
+          }
+        } else {
+          soundAlarm = false;
         }
-      } else {
-        soundAlarm = false;
       }
     }
   } else if (topic_idx == 1) {
@@ -69,7 +80,7 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
       }
     } else {
       soundAlarm = false;
-    }    
+    }
   }
 
   // free memory assigned to message
@@ -79,14 +90,14 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
 boolean mqtt_connect()
 {
   DEBUG_LOG(1, "Attempting MQTT connection ...");
-  if (mqttClient.connect(mqttClientId)) {
+  if (mqttClient.connect(mqttClientId, mqttUsername, mqttPassword)) {
     DEBUG_LOG(1, "  connected");
     // Once connected, publish an announcement ...
     publish_connected();
     //    publish_ip_address();
     // ... and subscribe to topics (should have list)
-  //  mqttClient.subscribe("homesecurity/status/sensor");
-  //  mqttClient.subscribe("homesecurity/interior/status/sensor");
+    //  mqttClient.subscribe("homesecurity/status/sensor");
+    //  mqttClient.subscribe("homesecurity/interior/status/sensor");
     mqttClient.subscribe("interiorhs/status/sensor");
     mqttClient.subscribe("home/security/alarm");
   } else {
@@ -112,6 +123,8 @@ void setup()
 {
   Serial.begin(BAUD_RATE);
 
+  Serial.println("Test");
+
   // Configure WiFly
   DEBUG_LOG(1, "configuring WiFly ...");
   wifly_configure();
@@ -131,8 +144,8 @@ void setup()
   --------------------------------------------------------------------------------------*/
 void loop()
 {
-  unsigned long currentMillis = millis();
-  
+  unsigned long now = millis();
+
   // require a client.loop in order to receive subscriptions
   //  mqttClient.loop();
 
@@ -141,37 +154,51 @@ void loop()
   //  }
 
   // alternative based on code in relayr
-  if (mqttClient.connected()) {
-    mqttClient.loop();
+  // if (mqttClient.connected()) {
+  //   mqttClient.loop();
+  // } else {
+  //   //if connection lost, try to reconnect
+  //   mqtt_connect();
+  // }
+
+  if (!mqttClient.connected()) {
+    mqttClientConnected = false;
+    if (now - lastReconnectAttempt >= RECONNECTION_ATTEMPT_INTERVAL) {
+      lastReconnectAttempt = now;
+      // Attempt to reconnect
+      if (mqtt_connect()) {
+        lastReconnectAttempt = 0;
+        mqttClientConnected = true;
+      }
+    }
   } else {
-    //if connection lost, try to reconnect
-    mqtt_connect();
+    // Client connected
+    mqttClient.loop();
   }
 
   if (soundAlarm && !alarmSounding) {
-    alarmStart = currentMillis;
+    alarmStart = now;
     alarmSounding = true;
     DEBUG_LOG(1, "alarmStart set");
   }
 
-  if (alarmSounding && (currentMillis - alarmStart <= ALARM_DURATION)) {
+  if (alarmSounding && (now - alarmStart <= ALARM_DURATION)) {
     DEBUG_LOG(1, "alertTone");
     alertTone();
   }
 
-  if (alarmSounding && (currentMillis - alarmStart > ALARM_DURATION)) {
+  if (alarmSounding && (now - alarmStart > ALARM_DURATION)) {
     DEBUG_LOG(1, "stop alert");
     soundAlarm = false;
     alarmSounding = false;
-//    alarmStart = 0UL;
+    //    alarmStart = 0UL;
   }
 
 #if USE_HARDWARE_WATCHDOG
-  if (currentMillis - previousMillis >= WATCHDOG_INTERVAL) {
+  if (now - previousMillis >= WATCHDOG_INTERVAL) {
     // save the last time you blinked the LED
-    previousMillis = currentMillis;
+    previousMillis = now;
     ResetWatchdog();
   }
 #endif
 }
-

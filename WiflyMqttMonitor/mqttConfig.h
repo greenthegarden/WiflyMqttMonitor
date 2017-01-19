@@ -6,11 +6,18 @@
 
 
 // MQTT parameters
-IPAddress mqttServerAddr(192, 168, 1, 50);    // openHAB server
+IPAddress mqttServerAddr(192, 168, 1, 52);    // openHAB server
 char mqttClientId[]               = "monitor";
+char mqttUsername[]               = "emonpi";
+char mqttPassword[]               = "emonpimqtt2016";
 const int MQTT_PORT               = 1883;
 //#define MQTT_MAX_PACKET_SIZE        168
 //#define MQTT_KEEPALIVE              300
+
+unsigned long lastReconnectAttempt = 0UL;
+const unsigned long RECONNECTION_ATTEMPT_INTERVAL = 5000UL;
+
+boolean mqttClientConnected = false;
 
 const char COMMAND_SEPARATOR      = ',';
 
@@ -45,8 +52,8 @@ PGM_P const MQTT_PAYLOADS[]           PROGMEM = { MQTT_PAYLOAD_CONNECTED,   // i
 
 // subscription topics
 //const char SECURITY_TOPIC[]    PROGMEM = "homesecurity/status/sensor";
-const char SECURITY_TOPIC[]    PROGMEM = "interiorhs/status/sensor";
-//const char SECURITY_TOPIC[]    PROGMEM = "homesecurity/interior/status/sensor";
+//const char SECURITY_TOPIC[]    PROGMEM = "interiorhs/status/sensor";
+const char SECURITY_TOPIC[]    PROGMEM = "homesecurity/interior/status/sensor";
 
 PGM_P const SUBSCRIPTION_TOPICS[]   PROGMEM = { SECURITY_TOPIC,    // idx = 0
                                               };
@@ -64,7 +71,7 @@ void publish_ip_address()
 {
   progBuffer[0] = '\0';
   strcpy_P(progBuffer, (char*)pgm_read_word(&(STATUS_TOPICS[1])));
-  mqttClient.publish(progBuffer, "192.168.1.90");
+  mqttClient.publish(progBuffer, "192.168.1.57");
 }
 
 void publish_uptime()
@@ -78,4 +85,3 @@ void publish_uptime()
 
 
 #endif  /* WIFLYMQTTMONITOR_MQTT_CONFIG_H_ */
-

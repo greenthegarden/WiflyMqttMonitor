@@ -35,4 +35,3 @@ const unsigned long ALARM_DURATION = 5000UL;
 
 
 #endif  /* WIFLYMQTTMONITOR_CONFIG_H_ */
-

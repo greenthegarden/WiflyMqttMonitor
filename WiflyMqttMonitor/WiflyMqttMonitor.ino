@@ -97,9 +97,9 @@ boolean mqtt_connect()
     //    publish_ip_address();
     // ... and subscribe to topics (should have list)
     //  mqttClient.subscribe("homesecurity/status/sensor");
-    //  mqttClient.subscribe("homesecurity/interior/status/sensor");
-    mqttClient.subscribe("interiorhs/status/sensor");
-    mqttClient.subscribe("home/security/alarm");
+    mqttClient.subscribe("homesecurity/interior/status/sensor");
+//    mqttClient.subscribe("interiorhs/status/sensor");
+//    mqttClient.subscribe("home/security/alarm");
   } else {
     DEBUG_LOG(1, "failed, rc = ");
     DEBUG_LOG(1, mqttClient.state());
